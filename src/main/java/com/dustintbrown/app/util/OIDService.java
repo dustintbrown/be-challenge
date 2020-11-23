@@ -1,12 +1,7 @@
 package com.dustintbrown.app.util;
 
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,24 +68,63 @@ public class OIDService {
         });
     }
 
-    public void importOIDsFromFile(String filename) throws FileNotFoundException, IOException {
+    public void importOIDsFromFile(String filename) throws IOException {
+        loadOIDsFromFile(oids, filename, false);
+    }
+
+    private Collection<String> loadOIDsFromFileAsStrings(String filename) throws IOException{
+        ArrayList<String> returnMe = new ArrayList<>();
+        loadOIDsFromFile(returnMe, filename, true);
+        return returnMe;
+    }
+
+    private void loadOIDsFromFile(Collection c, String filename, boolean asString) throws IOException{
         LOGGER.log(Level.INFO, "Importing OIDs from file: {0}", filename);
-        oids.clear();
         final long startTime = System.currentTimeMillis();
         int record_count = 0;
         try (final BufferedReader myReader = new BufferedReader(new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8))) {
             String line;
             while ((line = myReader.readLine()) != null) {
-                oids.add(parseOIDString(line));
-                record_count++;
-                if (record_count % 1000000 == 0) {
-                    LOGGER.log(Level.FINE, "Read {0} records.", record_count);
+                try {
+                    if(asString){
+                        c.add(line);
+                    }else {
+                        c.add(parseOIDString(line));
+                    }
+                    record_count++;
+                    if (record_count % 1000000 == 0) {
+                        LOGGER.log(Level.FINE, "Read {0} records.", record_count);
+                    }
+                } catch (Exception e){
+                    // Fails if a line can't be read
+                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                    e.printStackTrace();
                 }
             }
         }
         final long endTime = System.currentTimeMillis();
-        Object[] params = {oids.size(), endTime - startTime};
+        Object[] params = {c.size(), endTime - startTime};
         LOGGER.log(Level.INFO, "Read {0} OIDs from file. Operation completed in {1} milliseconds.", params);
+    }
+
+    public Collection<String> diffFiles(String filename1, String filename2) throws IOException {
+        ArrayList<String> returnMe = new ArrayList<>();
+        ArrayList<String> setA = new ArrayList<>();
+        ArrayList<String> setB = new ArrayList<>();
+        loadOIDsFromFile(setA, filename1,true);
+        loadOIDsFromFile(setB, filename2,true);
+
+        setA.forEach(oid ->{
+            if(setB.contains(oid)){
+                returnMe.add("  " + oid);
+            }else{
+                returnMe.add("- " + oid);
+            }
+        });
+        setB.removeAll(setA); //leaves setB with only additions
+        setB.forEach(oid -> returnMe.add( "+ " + oid));
+        return returnMe;
+
     }
 
     public void writeOIDsToFile(String filename) throws IOException {
@@ -187,6 +221,16 @@ public class OIDService {
 
         return returnMe;
     }
+
+    public static void printEncodedOIDsInHex(Collection<byte[]> data){
+        data.forEach(t -> {
+            for (int i = 0; i < t.length; i++) {
+                System.out.println(Integer.toHexString((0x000000FF & t[i])));
+            }
+        });
+
+    }
+
     private void encodeFourByteInt(ArrayList<Byte> data, int i) {
         int step1 = i / 262144;
         int txMg = 0x8 + step1;
