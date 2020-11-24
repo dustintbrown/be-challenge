@@ -4,11 +4,11 @@ Java project for BE candidate selection.
 
 ## Usage
 
-The Xmx and Xms values should be ~ 3x the filesize importing. The 6G value below works well for ~100 Million OIDs.
+The Xmx and Xms values should be ~ 3x the filesize importing. The 10G value below works well for ~100 Million OIDs. For reference 100M OIDs is about 2.4G on disk.
 
 ```shell script
 mvn clean package
-java -Xmx6G -Xmx6G -jar target/java-assessment-1.0.0.jar
+java -Xmx10G -Xmx10G -jar target/java-assessment-1.0.0.jar
 ```
 ```text
 -------------------------
