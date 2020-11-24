@@ -7,7 +7,8 @@ Java project for BE candidate selection.
 The Xmx and Xms values should be ~ 3x the filesize importing. The 6G value below works well for ~100 Million OIDs.
 
 ```shell script
-java -Xmx6G -Xmx6G com.dustintbrown.app.App
+mvn clean package
+java -Xmx6G -Xmx6G -jar target/java-assessment-1.0.0.jar
 ```
 ```text
 -------------------------
