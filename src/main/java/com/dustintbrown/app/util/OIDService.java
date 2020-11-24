@@ -63,7 +63,7 @@ public class OIDService {
         int[] returnMe = new int[length];
         for (int i = 0; i < length; i++) {
             if (i < 2) {
-                returnMe[i] = (rand.nextInt(15));
+                returnMe[i] = (rand.nextInt(16));
             } else if(i==length-1) {
                 //last item should have a larger scope to be more realistic
                 returnMe[i] = generateBiasedPositiveInt(65000,4096);
@@ -213,7 +213,7 @@ public class OIDService {
     public void writeOIDsToFile(String filename) throws IOException {
         FileWriter fileWriter = new FileWriter(filename);
         try(PrintWriter printWriter = new PrintWriter(fileWriter)){
-            oids.forEach(oid -> printWriter.print(parseOID(oid)));
+            oids.forEach(oid -> printWriter.println(parseOID(oid)));
         }
     }
 

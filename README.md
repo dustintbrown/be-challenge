@@ -8,7 +8,7 @@ The Xmx and Xms values should be ~ 3x the filesize importing. The 10G value belo
 
 ```shell script
 mvn clean package
-java -Xmx10G -Xmx10G -jar target/java-assessment-1.0.0.jar
+java -Xms10G -Xmx10G -jar target/java-assessment-1.0.1.jar
 ```
 ```text
 -------------------------
@@ -23,4 +23,13 @@ java -Xmx10G -Xmx10G -jar target/java-assessment-1.0.0.jar
 7 - Encode loaded OIDs
 8 - Show diff between loaded OIDs and a given file
 9 - Quit
+```
+
+## How to Generate Random OID Files
+
+You can use the built-in utility to generate text files with random OIDs.
+
+```shell script
+mvn clean package
+java -Xms10G -Xmx10G -classpath target/java-assessment-1.0.1.jar com.dustintbrown.app.RandomOIDGenerator <num_to_generate> <full_path_to_output_file>.txt
 ```

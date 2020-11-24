@@ -6,7 +6,7 @@
 
   <groupId>com.dustintbrown.app</groupId>
   <artifactId>java-assessment</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <packaging>jar</packaging>
 
   <name>java-assessment</name>
